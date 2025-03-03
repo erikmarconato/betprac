@@ -1,0 +1,23 @@
+.navegationbarDiv{
+    background-color: darkgray;
+    height: 40px;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+.rankingAndBetsDiv{
+    align-items: center;
+    position: relative;
+    
+}
+
+.rankingAndBetsInput{
+    margin: 20px;
+}
+
+.searchInput{
+    margin-right: 100px;
+}
