@@ -1,20 +1,50 @@
-.header{
-    background-color: #d9d9d9;
+.header {
+    background: linear-gradient(135deg, #222, #2d2d2d);
     display: flex;
-    justify-content: space-around;
-    height: 70px;
-    overflow: hidden;
-    position: relative;
+    justify-content: space-between;
     align-items: center;
+    padding: 15px 30px;
+    border-bottom: 2px solid #ffcc00;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+    max-width: 1100px;
+    margin: 0 auto 12px auto;
+    border-radius: 12px;
 }
 
-.imgLogo{
-    width: 100px;
-    height: 70px;
-    object-fit: cover;
+/* Ajustando a logo para ter "Bet" acima de "Prac" */
+.logo {
+    display: flex;
+    flex-direction: column; /* Deixa os textos em coluna */
+    font-size: 28px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0px 3px 8px rgba(255, 255, 255, 0.2);
+    align-items: center; /* Centraliza os textos */
+    line-height: 1; /* Remove espaços extras entre as linhas */
 }
 
-.btnLogin{
-    width: 90px;
-    height: 32px;
+.logo span {
+    color: #ffcc00;
+    text-shadow: 0px 3px 10px rgba(255, 204, 0, 0.6);
+}
+
+.btnLogin {
+    background: linear-gradient(135deg, #ffcc00, #ffb400);
+    border: none;
+    padding: 10px 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    color: #1e1e1e;
+    box-shadow: 0px 4px 10px rgba(255, 204, 0, 0.3);
+}
+
+.btnLogin:hover {
+    background: linear-gradient(135deg, #e6b800, #d9a400);
+    transform: scale(1.05);
+    box-shadow: 0px 6px 12px rgba(255, 204, 0, 0.5);
 }
