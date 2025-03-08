@@ -35,12 +35,19 @@ public class MatchStatisticsService {
         this.restTemplate = restTemplate;
     }
 
-    @Scheduled(cron = "55 55 20 * * ?")
+    @Scheduled(cron = "0 13 05 * * ?")
     public void fetchAndSaveMatchStatistics() {
         List<MatchesEntity> finishedMatches = matchesRepository.findByStatusMatch("FT");
         List<Long> fixtureIds = new ArrayList<>();
+
         for (MatchesEntity match : finishedMatches) {
-            fixtureIds.add(match.getFixtureId());
+            if (!match.isStatisticsUploaded()) {
+                fixtureIds.add(match.getFixtureId());
+            }
+        }
+
+        if (fixtureIds.isEmpty()) {
+            return;
         }
 
         List<List<Long>> fixtureIdChunks = partitionList(fixtureIds, 20);
@@ -81,8 +88,15 @@ public class MatchStatisticsService {
                         Optional<MatchesEntity> matchOpt = matchesRepository.findByFixtureId(fixtureId);
                         if (matchOpt.isPresent()) {
                             MatchesEntity match = matchOpt.get();
+
+                            JsonNode goalsNode = matchStatsNode.path("goals");
+                            int homeGoals = goalsNode.path("home").asInt(0);
+                            int awayGoals = goalsNode.path("away").asInt(0);
+
                             MatchStatisticsEntity matchStatistics = new MatchStatisticsEntity();
                             matchStatistics.setMatch(match);
+                            matchStatistics.setHomeGoals(homeGoals);
+                            matchStatistics.setAwayGoals(awayGoals);
 
                             JsonNode teams = matchStatsNode.path("teams");
                             boolean homeWinner = teams.path("home").path("winner").asBoolean(false);
@@ -90,7 +104,6 @@ public class MatchStatisticsService {
 
                             boolean awayWinner = teams.path("away").path("winner").asBoolean(false);
                             matchStatistics.setAwayWinner(awayWinner);
-
 
                             JsonNode teamStats = matchStatsNode.path("statistics");
                             if (teamStats != null && teamStats.isArray()) {
@@ -114,7 +127,10 @@ public class MatchStatisticsService {
                                     }
                                 }
                             }
+
                             matchStatisticsRepository.save(matchStatistics);
+                            match.setStatisticsUploaded(true);
+                            matchesRepository.save(match);
                         }
                     }
                 }

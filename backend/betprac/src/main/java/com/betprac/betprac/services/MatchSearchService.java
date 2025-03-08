@@ -45,15 +45,12 @@ public class MatchSearchService {
         this.restTemplate = restTemplate;
     }
 
-    //@Scheduled(cron = "0 0 4 * * ?")  // Executa todos os dias às 4:00 AM
-    @Scheduled(cron = "0 55 0 * * ?")
+    @Scheduled(cron = "0 24 22 * * ?")
     public void fetchAndSaveMatches() {
 
-        // Calcular a data do dia seguinte
-        LocalDate tomorrow = LocalDate.now().plusDays(1); // Adiciona 1 dia à data atual
-        String formattedDate = tomorrow.format(DateTimeFormatter.ISO_DATE); // Formata a data no formato "yyyy-MM-dd"
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        String formattedDate = tomorrow.format(DateTimeFormatter.ISO_DATE);
 
-        // URL da API com a data de um dia seguinte
         String url = "https://api-football-v1.p.rapidapi.com/v3/fixtures?date=" + formattedDate;
 
         HttpHeaders headers = new HttpHeaders();

@@ -52,6 +52,9 @@ public class MatchesEntity {
     @OneToMany(mappedBy = "match", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MatchStatisticsEntity> matchStatistics;
 
+    @Column(name = "statistics_uploaded")
+    private Boolean statisticsUploaded;
+
     public MatchesEntity(Long fixtureId, LocalDateTime matchDate, String statusMatch, String league,
                          String country, String homeTeam, String awayTeam, String imgHomeTeam, String imgAwayTeam) {
         this.fixtureId = fixtureId;
@@ -63,42 +66,7 @@ public class MatchesEntity {
         this.awayTeam = awayTeam;
         this.imgHomeTeam = imgHomeTeam;
         this.imgAwayTeam = imgAwayTeam;
-    }
-
-    public void setMatchDate(LocalDateTime matchDate) {
-        this.matchDate = matchDate;
-    }
-
-    public void setStatusMatch(String statusMatch) {
-        this.statusMatch = statusMatch;
-    }
-
-    public void setLeague(String league) {
-        this.league = league;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public void setHomeTeam(String homeTeam) {
-        this.homeTeam = homeTeam;
-    }
-
-    public void setAwayTeam(String awayTeam) {
-        this.awayTeam = awayTeam;
-    }
-
-    public void setImgHomeTeam(String imgHomeTeam) {
-        this.imgHomeTeam = imgHomeTeam;
-    }
-
-    public void setImgAwayTeam(String imgAwayTeam) {
-        this.imgAwayTeam = imgAwayTeam;
-    }
-
-    public Long getFixtureId() {
-        return fixtureId;
+        this.statisticsUploaded = false;
     }
 
     public boolean isHomeTeam(String teamName) {
@@ -107,5 +75,9 @@ public class MatchesEntity {
 
     public boolean isAwayTeam(String teamName) {
         return this.awayTeam != null && this.awayTeam.equalsIgnoreCase(teamName);
+    }
+
+    public boolean isStatisticsUploaded() {
+        return statisticsUploaded;
     }
 }
