@@ -2,6 +2,7 @@ package com.betprac.betprac.services;
 
 import com.betprac.betprac.entities.MatchesEntity;
 import com.betprac.betprac.repositories.MatchesRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -17,10 +18,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MatchService {
+public class MatchSearchService {
 
     private final MatchesRepository matchesRepository;
     private final RestTemplate restTemplate;
+
+    @Value("${api.football.key}")
+    private String apiKey;
+
+    @Value("${api.football.host}")
+    private String apiHost;
 
     private static final List<Integer> MAIN_LEAGUES = List.of(
             39,  // Premier League (Inglaterra)
@@ -33,7 +40,7 @@ public class MatchService {
             203  // Süper Lig (Turquia)
     );
 
-    public MatchService(MatchesRepository matchesRepository, RestTemplate restTemplate) {
+    public MatchSearchService(MatchesRepository matchesRepository, RestTemplate restTemplate) {
         this.matchesRepository = matchesRepository;
         this.restTemplate = restTemplate;
     }
@@ -50,8 +57,8 @@ public class MatchService {
         String url = "https://api-football-v1.p.rapidapi.com/v3/fixtures?date=" + formattedDate;
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("x-rapidapi-key", "23f426539amsh380613e9e0964f5p1f3f99jsn63e443ca7939");
-        headers.set("x-rapidapi-host", "api-football-v1.p.rapidapi.com");
+        headers.set("x-rapidapi-key", apiKey);
+        headers.set("x-rapidapi-host", apiHost);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
@@ -65,16 +72,13 @@ public class MatchService {
                 if (matchesArray != null) {
                     for (JsonNode match : matchesArray) {
 
-                        // Pegando informações da liga
                         JsonNode leagueObj = match.get("league");
                         int leagueId = leagueObj.get("id").asInt();
 
-                        // Filtrando apenas as principais ligas
                         if (!MAIN_LEAGUES.contains(leagueId)) {
                             continue;
                         }
 
-                        // Pegando informações da partida
                         JsonNode fixture = match.get("fixture");
                         long fixtureId = fixture.get("id").asLong();
                         LocalDateTime matchDate = LocalDateTime.parse(
@@ -82,18 +86,15 @@ public class MatchService {
                                 DateTimeFormatter.ISO_DATE_TIME
                         );
 
-                        // Ajuste para o fuso horário UTC-3
                         matchDate = matchDate.atOffset(ZoneOffset.UTC).plusHours(-3).toLocalDateTime();
 
                         JsonNode status = fixture.get("status");
                         String matchStatus = status.get("short").asText();
 
-                        // Pegando informações dos times
                         JsonNode teams = match.get("teams");
                         JsonNode homeTeam = teams.get("home");
                         JsonNode awayTeam = teams.get("away");
 
-                        // Pegando informações básicas
                         String leagueName = leagueObj.get("name").asText();
                         String country = leagueObj.get("country").asText();
                         String homeTeamName = homeTeam.get("name").asText();
@@ -101,12 +102,10 @@ public class MatchService {
                         String imgHomeTeam = homeTeam.get("logo").asText();
                         String imgAwayTeam = awayTeam.get("logo").asText();
 
-                        // Verifica se a partida já existe no banco
                         Optional<MatchesEntity> existingMatch = matchesRepository.findByFixtureId(fixtureId);
 
                         MatchesEntity matchEntity;
                         if (existingMatch.isPresent()) {
-                            // Atualiza os dados existentes
                             matchEntity = existingMatch.get();
                             matchEntity.setMatchDate(matchDate);
                             matchEntity.setStatusMatch(matchStatus);

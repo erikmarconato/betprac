@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "matches")
@@ -47,6 +48,9 @@ public class MatchesEntity {
 
     @Column(name = "imgAwayTeam")
     private String imgAwayTeam;
+
+    @OneToMany(mappedBy = "match", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<MatchStatisticsEntity> matchStatistics;
 
     public MatchesEntity(Long fixtureId, LocalDateTime matchDate, String statusMatch, String league,
                          String country, String homeTeam, String awayTeam, String imgHomeTeam, String imgAwayTeam) {
@@ -93,4 +97,15 @@ public class MatchesEntity {
         this.imgAwayTeam = imgAwayTeam;
     }
 
+    public Long getFixtureId() {
+        return fixtureId;
+    }
+
+    public boolean isHomeTeam(String teamName) {
+        return this.homeTeam != null && this.homeTeam.equalsIgnoreCase(teamName);
+    }
+
+    public boolean isAwayTeam(String teamName) {
+        return this.awayTeam != null && this.awayTeam.equalsIgnoreCase(teamName);
+    }
 }
