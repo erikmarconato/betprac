@@ -13,4 +13,6 @@ public interface MatchesRepository extends JpaRepository<MatchesEntity, Long> {
     Optional<MatchesEntity> findByFixtureId(Long fixtureId);
 
     List<MatchesEntity> findByStatusMatch(String statusMatch);
+
+    List<MatchesEntity> findByStatusMatchAndOddsUploaded(String statusMatch, Boolean oddsUploaded);
 }

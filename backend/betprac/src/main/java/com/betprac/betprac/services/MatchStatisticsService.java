@@ -35,7 +35,7 @@ public class MatchStatisticsService {
         this.restTemplate = restTemplate;
     }
 
-    @Scheduled(cron = "0 13 05 * * ?")
+    @Scheduled(cron = "10 43 08 * * ?")
     public void fetchAndSaveMatchStatistics() {
         List<MatchesEntity> finishedMatches = matchesRepository.findByStatusMatch("FT");
         List<Long> fixtureIds = new ArrayList<>();

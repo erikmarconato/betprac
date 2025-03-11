@@ -55,6 +55,9 @@ public class MatchesEntity {
     @Column(name = "statistics_uploaded")
     private Boolean statisticsUploaded;
 
+    @Column(name = "odds_uploaded")
+    private Boolean oddsUploaded = false;
+
     public MatchesEntity(Long fixtureId, LocalDateTime matchDate, String statusMatch, String league,
                          String country, String homeTeam, String awayTeam, String imgHomeTeam, String imgAwayTeam) {
         this.fixtureId = fixtureId;
@@ -79,5 +82,9 @@ public class MatchesEntity {
 
     public boolean isStatisticsUploaded() {
         return statisticsUploaded;
+    }
+
+    public void markOddsAsUploaded(boolean b) {
+        this.oddsUploaded = true;
     }
 }

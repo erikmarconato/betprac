@@ -30,6 +30,7 @@ public class MatchSearchService {
     private String apiHost;
 
     private static final List<Integer> MAIN_LEAGUES = List.of(
+            2,   //Champions League
             39,  // Premier League (Inglaterra)
             140, // La Liga (Espanha)
             78,  // Bundesliga (Alemanha)
@@ -45,13 +46,10 @@ public class MatchSearchService {
         this.restTemplate = restTemplate;
     }
 
-    @Scheduled(cron = "0 24 22 * * ?")
+    @Scheduled(cron = "0 43 08 * * ?")
     public void fetchAndSaveMatches() {
 
-        LocalDate tomorrow = LocalDate.now().plusDays(1);
-        String formattedDate = tomorrow.format(DateTimeFormatter.ISO_DATE);
-
-        String url = "https://api-football-v1.p.rapidapi.com/v3/fixtures?date=" + formattedDate;
+        String url = "https://api-football-v1.p.rapidapi.com/v3/fixtures?date=" + LocalDate.now();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("x-rapidapi-key", apiKey);
