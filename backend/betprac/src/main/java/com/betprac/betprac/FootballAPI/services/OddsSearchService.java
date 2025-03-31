@@ -1,9 +1,9 @@
-package com.betprac.betprac.services;
+package com.betprac.betprac.FootballAPI.services;
 
-import com.betprac.betprac.entities.MatchesEntity;
-import com.betprac.betprac.entities.OddsEntity;
-import com.betprac.betprac.repositories.MatchesRepository;
-import com.betprac.betprac.repositories.OddsRepository;
+import com.betprac.betprac.FootballAPI.entities.MatchesEntity;
+import com.betprac.betprac.FootballAPI.entities.OddsEntity;
+import com.betprac.betprac.FootballAPI.repositories.MatchesRepository;
+import com.betprac.betprac.FootballAPI.repositories.OddsRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.client.HttpClientErrorException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,7 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class OddsService {
+public class OddsSearchService {
 
     private final RestTemplate restTemplate;
     private final MatchesRepository matchesRepository;
@@ -32,14 +33,14 @@ public class OddsService {
     @Value("${api.football.host}")
     private String apiHost;
 
-    public OddsService(RestTemplate restTemplate, MatchesRepository matchesRepository, OddsRepository oddsRepository, ObjectMapper objectMapper) {
+    public OddsSearchService(RestTemplate restTemplate, MatchesRepository matchesRepository, OddsRepository oddsRepository, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.matchesRepository = matchesRepository;
         this.oddsRepository = oddsRepository;
         this.objectMapper = objectMapper;
     }
 
-    @Scheduled(cron = "20 43 08 * * ?")
+    @Scheduled(cron = "20 19 01 * * ?")
     public void fetchOddsForMatches() {
         List<MatchesEntity> matches = matchesRepository.findByStatusMatchAndOddsUploaded("NS", false);
 
@@ -47,26 +48,69 @@ public class OddsService {
             return;
         }
 
-        String url = "https://api-football-v1.p.rapidapi.com/v3/odds?date=" + LocalDate.now() + "&page=1&bookmaker=8";
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("x-rapidapi-key", apiKey);
-        headers.set("x-rapidapi-host", apiHost);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+        int maxRetries = 3;
+        int retryDelay = 60000;
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        int totalPages = 1;
+        boolean success = false;
+        int attempt = 0;
 
-        int totalPages = getTotalPagesFromResponse(response.getBody());
+        while (attempt < maxRetries && !success) {
+            try {
+                String url = "https://api-football-v1.p.rapidapi.com/v3/odds?date=" + LocalDate.now() + "&page=1&bookmaker=8";
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("x-rapidapi-key", apiKey);
+                headers.set("x-rapidapi-host", apiHost);
+                HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        for (int page = 1; page <= totalPages; page++) {
-            String pageUrl = "https://api-football-v1.p.rapidapi.com/v3/odds?date=" + LocalDate.now() + "&page=" + page + "&bookmaker=8";
-            ResponseEntity<String> pageResponse = restTemplate.exchange(pageUrl, HttpMethod.GET, entity, String.class);
+                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+                totalPages = getTotalPagesFromResponse(response.getBody());
 
-            processOddsForMatches(pageResponse.getBody(), matches);
+                for (int page = 1; page <= totalPages; page++) {
+                    fetchAndProcessOdds(page, matches);
+                }
+
+                for (MatchesEntity match : matches) {
+                    match.markOddsAsUploaded(true);
+                    matchesRepository.save(match);
+                }
+
+                success = true;
+            } catch (HttpClientErrorException.TooManyRequests e) {
+                attempt++;
+                System.out.println("Erro 429: Muitas requisições. Tentativa " + attempt + " de " + maxRetries + ". Aguardando " + (retryDelay / 1000) + " segundos...");
+                try {
+                    Thread.sleep(retryDelay);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
         }
+    }
 
-        for (MatchesEntity match : matches) {
-            match.markOddsAsUploaded(true);
-            matchesRepository.save(match);
+    private void fetchAndProcessOdds(int page, List<MatchesEntity> matches) {
+        try {
+            String pageUrl = "https://api-football-v1.p.rapidapi.com/v3/odds?date=" + LocalDate.now() + "&page=" + page + "&bookmaker=8";
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("x-rapidapi-key", apiKey);
+            headers.set("x-rapidapi-host", apiHost);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<String> pageResponse = restTemplate.exchange(pageUrl, HttpMethod.GET, entity, String.class);
+            processOddsForMatches(pageResponse.getBody(), matches);
+        } catch (HttpClientErrorException.TooManyRequests e) {
+            System.out.println("Erro 429 na página " + page + ". Aguardando 60s antes de tentar novamente...");
+            try {
+                Thread.sleep(60000);
+                fetchAndProcessOdds(page, matches);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -76,7 +120,7 @@ public class OddsService {
             return root.path("paging").path("total").asInt();
         } catch (Exception e) {
             e.printStackTrace();
-            return 0;
+            return 1;
         }
     }
 

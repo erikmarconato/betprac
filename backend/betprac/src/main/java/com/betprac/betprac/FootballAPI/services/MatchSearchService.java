@@ -1,7 +1,7 @@
-package com.betprac.betprac.services;
+package com.betprac.betprac.FootballAPI.services;
 
-import com.betprac.betprac.entities.MatchesEntity;
-import com.betprac.betprac.repositories.MatchesRepository;
+import com.betprac.betprac.FootballAPI.entities.MatchesEntity;
+import com.betprac.betprac.FootballAPI.repositories.MatchesRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -31,6 +31,8 @@ public class MatchSearchService {
 
     private static final List<Integer> MAIN_LEAGUES = List.of(
             2,   //Champions League
+            5,   // UEFA Nations League
+            34,  // World Cup - Qualification South America
             39,  // Premier League (Inglaterra)
             140, // La Liga (Espanha)
             78,  // Bundesliga (Alemanha)
@@ -46,7 +48,7 @@ public class MatchSearchService {
         this.restTemplate = restTemplate;
     }
 
-    @Scheduled(cron = "0 43 08 * * ?")
+    @Scheduled(cron = "0 19 01 * * ?")
     public void fetchAndSaveMatches() {
 
         String url = "https://api-football-v1.p.rapidapi.com/v3/fixtures?date=" + LocalDate.now();

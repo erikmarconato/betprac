@@ -1,9 +1,9 @@
-package com.betprac.betprac.services;
+package com.betprac.betprac.FootballAPI.services;
 
-import com.betprac.betprac.entities.MatchStatisticsEntity;
-import com.betprac.betprac.repositories.MatchStatisticsRepository;
-import com.betprac.betprac.entities.MatchesEntity;
-import com.betprac.betprac.repositories.MatchesRepository;
+import com.betprac.betprac.FootballAPI.entities.MatchStatisticsEntity;
+import com.betprac.betprac.FootballAPI.repositories.MatchStatisticsRepository;
+import com.betprac.betprac.FootballAPI.entities.MatchesEntity;
+import com.betprac.betprac.FootballAPI.repositories.MatchesRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MatchStatisticsService {
+public class MatchStatisticsSearchService {
 
     private final MatchesRepository matchesRepository;
     private final MatchStatisticsRepository matchStatisticsRepository;
@@ -29,18 +29,32 @@ public class MatchStatisticsService {
     @Value("${api.football.host}")
     private String apiHost;
 
-    public MatchStatisticsService(MatchesRepository matchesRepository, MatchStatisticsRepository matchStatisticsRepository, RestTemplate restTemplate) {
+    public MatchStatisticsSearchService(MatchesRepository matchesRepository, MatchStatisticsRepository matchStatisticsRepository, RestTemplate restTemplate) {
         this.matchesRepository = matchesRepository;
         this.matchStatisticsRepository = matchStatisticsRepository;
         this.restTemplate = restTemplate;
     }
 
-    @Scheduled(cron = "10 43 08 * * ?")
+    @Scheduled(cron = "10 19 01 * * ?")
     public void fetchAndSaveMatchStatistics() {
-        List<MatchesEntity> finishedMatches = matchesRepository.findByStatusMatch("FT");
+        List<MatchesEntity> finishedMatchesFT = matchesRepository.findByStatusMatch("FT"); //terminada em tempo normal
+        List<MatchesEntity> finishedMatchesAET = matchesRepository.findByStatusMatch("AET"); //terminada em prorrogação
+        List<MatchesEntity> finishedMatchesPEN = matchesRepository.findByStatusMatch("PEN"); //terminada em penalti
         List<Long> fixtureIds = new ArrayList<>();
 
-        for (MatchesEntity match : finishedMatches) {
+        for (MatchesEntity match : finishedMatchesFT) {
+            if (!match.isStatisticsUploaded()) {
+                fixtureIds.add(match.getFixtureId());
+            }
+        }
+
+        for (MatchesEntity match : finishedMatchesAET) {
+            if (!match.isStatisticsUploaded()) {
+                fixtureIds.add(match.getFixtureId());
+            }
+        }
+
+        for (MatchesEntity match : finishedMatchesPEN) {
             if (!match.isStatisticsUploaded()) {
                 fixtureIds.add(match.getFixtureId());
             }

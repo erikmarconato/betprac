@@ -1,7 +1,7 @@
-package com.betprac.betprac.repositories;
+package com.betprac.betprac.FootballAPI.repositories;
 
-import com.betprac.betprac.entities.MatchStatisticsEntity;
-import com.betprac.betprac.entities.MatchesEntity;
+import com.betprac.betprac.FootballAPI.entities.MatchStatisticsEntity;
+import com.betprac.betprac.FootballAPI.entities.MatchesEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

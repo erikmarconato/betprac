@@ -11,23 +11,29 @@
     border-radius: 12px;
 }
 
-/* Ajustando a logo para ter "Bet" acima de "Prac" */
 .logo {
     display: flex;
-    flex-direction: column; /* Deixa os textos em coluna */
+    flex-direction: row;
     font-size: 28px;
     font-weight: bold;
     font-family: Arial, sans-serif;
     text-transform: uppercase;
     color: #fff;
     text-shadow: 0px 3px 8px rgba(255, 255, 255, 0.2);
-    align-items: center; /* Centraliza os textos */
-    line-height: 1; /* Remove espaços extras entre as linhas */
+    align-items: center;
+    line-height: 1;
 }
 
-.logo span {
+.logo span:last-child {
+    color: #fff;
+    text-shadow: 0px 3px 8px rgba(255, 255, 255, 0.2);
+    margin-right: 5px;
+}
+
+.logo span:first-child {
     color: #ffcc00;
     text-shadow: 0px 3px 10px rgba(255, 204, 0, 0.6);
+    margin-right: 5px;
 }
 
 .btnLogin {

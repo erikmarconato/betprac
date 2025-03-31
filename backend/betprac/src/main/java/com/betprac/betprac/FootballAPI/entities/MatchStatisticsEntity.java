@@ -1,4 +1,4 @@
-package com.betprac.betprac.entities;
+package com.betprac.betprac.FootballAPI.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.betprac.betprac.configs;
+package com.betprac.betprac.FootballAPI.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
