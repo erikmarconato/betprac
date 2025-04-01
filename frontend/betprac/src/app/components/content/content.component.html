@@ -1,13 +1,14 @@
 <div class="mainContentDiv">
     <div class="leftContentDiv">
-        <ul class="list" id="listLeft">
-            <li>Futebol</li>
-            <li>Counter-Strike 2</li>
-        </ul>
+      <ul class="list" id="listLeft">
+        <li>Futebol</li>
+        <li>Counter-Strike 2</li>
+      </ul>
     </div>
+  
     <div class="rightContentDiv">
-        <app-card-games></app-card-games>
-        <app-card-games></app-card-games>
-        <app-card-games></app-card-games>
+      <div *ngFor="let match of matches; trackBy: trackByMatchId">
+        <app-card-games [match]="match"></app-card-games>
+      </div>
     </div>
 </div>

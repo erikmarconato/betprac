@@ -1,19 +1,25 @@
 <div class="mainCardDiv">
-    <div class="league-title">Champions League</div>
+    <div class="league-title">{{ match.league }}</div>
     <div class="teams">
         <div class="team">
-            <img src="https://media.api-sports.io/football/teams/569.png" class="imgTeamLogo">
-            <div class="team-name">Club Brugge</div>
+            <img [src]="match.imgHomeTeam" class="imgTeamLogo" alt="{{ match.homeTeam }}">
+            <div class="team-name">{{ match.homeTeam }}</div>
         </div>
         <div class="versus">-</div>
         <div class="team">
-            <img src="https://media.api-sports.io/football/teams/66.png" class="imgTeamLogo">
-            <div class="team-name">Aston Villa</div>
+            <img [src]="match.imgAwayTeam" class="imgTeamLogo" alt="{{ match.awayTeam }}">
+            <div class="team-name">{{ match.awayTeam }}</div>
         </div>
     </div>
-    <div class="bet-options">
-        <button class="bet-button">1</button>
-        <button class="bet-button">X</button>
-        <button class="bet-button">2</button>
+    <div class="bet-buttons">
+        <button class="odd-button" (click)="placeBet('Home', match)">
+            {{ getOddForType(match.oddsList, 'Home') }}
+        </button>
+        <button class="odd-button" (click)="placeBet('Draw', match)">
+            {{ getOddForType(match.oddsList, 'Draw') }}
+        </button>
+        <button class="odd-button" (click)="placeBet('Away', match)">
+            {{ getOddForType(match.oddsList, 'Away') }}
+        </button>
     </div>
 </div>
