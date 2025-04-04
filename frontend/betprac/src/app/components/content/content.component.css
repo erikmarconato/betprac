@@ -14,6 +14,7 @@
 
 .leftContentDiv {
     width: 260px;
+    margin-left: 100px;
 }
 
 .rightContentDiv {
@@ -21,6 +22,7 @@
     flex-wrap: wrap;
     gap: 15px; 
     margin-left: 20px;
+    margin-right: 100px;
 }
 
 .list {

@@ -11,9 +11,16 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}
-
-.league-title {
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .mainCardDiv:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.4);
+  }
+  
+  .league-title {
     background-color: #ffb400;
     color: #1e1e1e;
     padding: 8px;
@@ -25,24 +32,24 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.teams {
+  }
+  
+  .teams {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin: 12px 0;
-}
-
-.team {
+  }
+  
+  .team {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}
-
-.team-name {
+  }
+  
+  .team-name {
     font-size: 13px;
     font-weight: bold;
     margin-top: 5px;
@@ -51,22 +58,28 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 90px;
-}
-
-.imgTeamLogo {
+  }
+  
+  .imgTeamLogo {
     height: 45px;
     object-fit: contain;
     filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.5));
-}
-
-.bet-buttons {
+  }
+  
+  .versus {
+    font-size: 20px;
+    margin: 0 10px;
+    font-weight: bold;
+  }
+  
+  .bet-buttons {
     display: flex;
     justify-content: space-between;
     gap: 10px;
     margin-top: 15px;
-}
-
-.odd-button {
+  }
+  
+  .odd-button {
     background: linear-gradient(135deg, #ffb400, #ff8c00);
     border: none;
     border-radius: 8px;
@@ -77,9 +90,10 @@
     cursor: pointer;
     transition: all 0.3s ease;
     width: 80px;
-}
-
-.odd-button:hover {
+  }
+  
+  .odd-button:hover {
     background: linear-gradient(135deg, #ff8c00, #ff6a00);
     transform: scale(1.05);
-}
+  }
+  

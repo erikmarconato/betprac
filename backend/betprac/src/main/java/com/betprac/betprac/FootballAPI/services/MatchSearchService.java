@@ -48,7 +48,7 @@ public class MatchSearchService {
         this.restTemplate = restTemplate;
     }
 
-    @Scheduled(cron = "0 19 01 * * ?")
+    @Scheduled(cron = "0 37 03 * * ?")
     public void fetchAndSaveMatches() {
 
         String url = "https://api-football-v1.p.rapidapi.com/v3/fixtures?date=" + LocalDate.now();

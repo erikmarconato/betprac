@@ -6,8 +6,8 @@ import { ContentComponent } from '../../components/content/content.component';
 @Component({
   selector: 'app-initial',
   imports: [HeaderComponent, NavegationbarComponent, ContentComponent,],
-  templateUrl: './initial.component.html',
-  styleUrl: './initial.component.css'
+  templateUrl: './initial-page.component.html',
+  styleUrl: './initial-page.component.css'
 })
 export class InitialComponent {
 

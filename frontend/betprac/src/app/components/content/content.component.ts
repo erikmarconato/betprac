@@ -15,7 +15,7 @@ export class ContentComponent implements OnInit {
   constructor(private matchesService: MatchesService) {}
 
   ngOnInit(): void {
-    const date = '31-03-2025';
+    const date = '04-04-2025';
 
     this.matchesService.getMatchesByDate(date).subscribe({
       next: (data) => {

@@ -40,7 +40,7 @@ public class OddsSearchService {
         this.objectMapper = objectMapper;
     }
 
-    @Scheduled(cron = "20 19 01 * * ?")
+    @Scheduled(cron = "20 37 03 * * ?")
     public void fetchOddsForMatches() {
         List<MatchesEntity> matches = matchesRepository.findByStatusMatchAndOddsUploaded("NS", false);
 

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InitialComponent } from './initial.component';
+import { InitialComponent } from './initial-page.component';
 
 describe('InitialComponent', () => {
   let component: InitialComponent;
